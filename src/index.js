@@ -7,8 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const userInput = document.getElementById("assigned-user");
   const sortBtn = document.getElementById("sort-tasks");
 
-  form.addEventListener("submit", function(event) {
-    event.preventDefault(); 
+  let tasks = [];
+  let sortAsc = true;
+
+  form.addEventListener("submit", (event) => {
+  event.preventDefault(); 
 
     const taskText = taskInput.value.trim();
     const priority = prioritySelect.value;
@@ -17,48 +20,104 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (taskText === "") return;
 
-    tasks.push(task);
+    const newTask = {
+      text: taskText,
+      priority,
+      dueDate,
+      assignedTo,
+      completed: false
+    };
+
+    tasks.push(newTask);
     renderTasks();
     form.reset();
   });
 
-   sortBtn.addEventListener("click", () => {
+  sortBtn.addEventListener("click", () => {
     sortAsc = !sortAsc;
     renderTasks();
-  });
+    sortBtn.textContent = sortAsc
+      ? "Sort by Priority (Low → High)"
+      : "Sort by Priority (High → Low)";
+  }); 
 
-    const taskItem = document.createElement("div");
-    taskItem.classList.add("task-item");
+  function renderTasks() {
+    taskContainer.innerHTML = "";
 
-    taskItem.textContent = taskText + "";
+    const rank = { high: 3, medium: 2, low: 1 };
 
-    const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
-        editBtn.style.marginLeft = "5px";
-        editBtn.onclick = () => {
-          const newText = prompt("Edit task text:", task.text);
-          if (newText) {
-            tasks[i].text = newText.trim();
-            renderTasks();
-          }
-        };
+    const sortedTasks = [...tasks].sort((a, b) => {
+      let priorityDiff = sortAsc
+        ? rank[a.priority] - rank[b.priority]
+        : rank[b.priority] - rank[a.priority];
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete";
-    deleteBtn.addEventListener("click", () => {
-      taskItem.remove();
+      if (priorityDiff !== 0) return priorityDiff;
+
+      if (a.dueDate && b.dueDate) {
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      }
+      return 0;
     });
 
-    taskItem.appendChild(editBtn);
-    taskItem.appendChild(deleteBtn);
-    taskContainer.appendChild(taskItem);
+    sortedTasks.forEach((task) => {
 
-    form.reset(); 
+      const originalIndex = tasks.indexOf(task);
+      const taskDiv = document.createElement("div");
 
-    function getColor(priority) {
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = !!task.completed;              
+      checkbox.addEventListener("change", () => {
+        tasks[originalIndex].completed = checkbox.checked;
+        renderTasks();
+      });
+      taskDiv.appendChild(checkbox);
+
+      const content = document.createElement("span");
+      content.textContent = `${task.text} (Assigned to: ${task.assignedTo || "N/A"}, Due: ${task.dueDate || "N/A"})`;
+      
+      content.style.color = task.completed ? "grey" : getColor(task.priority);
+
+      if (task.completed) content.style.textDecoration = "line-through";
+      
+      
+      taskDiv.appendChild(content);
+
+      const completeBtn = document.createElement("button");
+      completeBtn.textContent = task.completed ? "Undo" : "Complete";
+      completeBtn.addEventListener("click", () => {
+        tasks[i].completed = !tasks[i].completed;
+        renderTasks();
+      });
+      taskDiv.appendChild(completeBtn);
+
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "Edit";
+      editBtn.addEventListener("click", () => {        
+        const newText = prompt("Edit task text:", task.text);
+        if (newText) {
+          tasks[i].text = newText.trim();
+          renderTasks();
+        }
+      });
+      taskDiv.appendChild(editBtn);
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Delete";
+      deleteBtn.addEventListener("click", () => {
+        tasks.splice(i, 1);
+        renderTasks();
+      });
+      taskDiv.appendChild(deleteBtn);
+
+      taskContainer.appendChild(taskDiv);
+    });
+  }
+
+  function getColor(priority) {
     if (priority === "high") return "red";
     if (priority === "medium") return "orange";
-    return "green";
+    if (priority === "low") return "green";
+    return "black";
   }
 });
-  });

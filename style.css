@@ -36,11 +36,23 @@ button {
   box-shadow: 2px 5px 5px #333;
 }
 
-task-item {
+.task-item {
   margin: 10px;
   border: 1px solid #333;
   background: rgba(255, 255, 255, 0.75);
   padding: 10px 15px 10px 15px;
   border-radius: 4px;
   box-shadow: 1px 3px 3px #333;
+}
+
+.high-priority {
+  color: red;
+}
+
+.medium-priority {
+  color: orange;
+}
+
+.low-priority {
+  color: green;
 }

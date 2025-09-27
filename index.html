@@ -22,23 +22,26 @@
     />
 
     <label for="priority">Priority:</label>
-      <select id="priority" name="priority">
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-      </select>
+    <select id="priority" name="priority">
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+
+    <button id="sort-tasks" type="button">Sort by Priority</button>
+
+    <button id="toggle-completed" type="button">Hide Completed</button>
     
-      <button id="sort-tasks">Sort by Priority</button>
+    <label for="due-date">Due Date:</label>
+    <input type="date" id="due-date" name="due-date" />
 
-      <label for="due-date">Due Date:</label>
-      <input type="date" id="due-date" name="due-date" />
-
-      <label for="assigned-user">Assigned To:</label>
-      <input type="text" id="assigned-user" name="assigned-user" placeholder="e.g. Natalie" />
+    <label for="assigned-user">Assigned To:</label>
+    <input type="text" id="assigned-user" name="assigned-user" placeholder="e.g. Natalie" />
 
 
     <input type="submit" value="Create New Task" />
   </form>
+
 
   <div id="list">
     <h2>My Todos:</h2>
